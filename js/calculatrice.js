@@ -218,3 +218,4 @@ document.querySelector('.Red').onclick = () => changerMode('rad');
 
 changerMode('deg');
 console.log('Calculatrice prête');
+
