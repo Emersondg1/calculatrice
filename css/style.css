@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+body {
+    background-color: antiquewhite;
+}
+
+header{
+    text-align: center;
+    margin-top: 25px;
+}
+
+
+#Cal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#ecran {
+    width: 555px;
+    min-height: 100px;
+    max-height: 250px;
+
+    border: 1px solid black;
+    border-radius: 6px;
+    margin-bottom: 50px;
+    padding: 10px;
+
+    overflow-y: auto;        /* scroll vertical dans le div */
+    overflow-x: hidden;
+
+    background-color: #f5f5f5;
+
+    /* IMPORTANT : on enlève flex ici */
+}
+
+#ecran h2 {
+    font-size: 2rem;
+    text-align: right;
+
+    white-space: normal;    
+    word-break: break-all;
+
+    margin: 0;
+}
+
+
+.boutton_nombre_operateur{
+    display: grid;
+    grid-template-columns: repeat(7, 75px);
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+button {
+    padding: 10px;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 10px;
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.egale {
+   
+    background-color: orange;
+    color: white;
+}
+
+
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 1.5rem;
+}
