@@ -73,23 +73,26 @@ function calculSecurise(expression) {
 
 function calculer() {
     try {
-        let expression = affichage
+        const expressionUtilisateur = affichage;
+
+        const expressionCalcul = affichage
             .replace(/π/g, Math.PI)
             .replace(/e/g, Math.E);
 
-        resultat = calculSecurise(expression); // 🔐 plus de eval
+        resultat = calculSecurise(expressionCalcul);
         dernierResultat = resultat;
         affichage = resultat.toString();
         calculTermine = true;
 
-        // (optionnel) historique
-        // ajouterHistorique(expression, resultat);
+        // Historique propre
+        ajouterHistorique(expressionUtilisateur, resultat);
 
     } catch {
         affichage = 'Erreur';
     }
     mettreAjourEcran();
 }
+
 
 
 
@@ -245,5 +248,136 @@ document.querySelector('.Red').onclick = () => changerMode('rad');
 
 changerMode('deg');
 console.log('Calculatrice prête');
+
+
+// Historique
+
+const listeHistorique = document.getElementById('listeHistorique');
+
+function ajouterHistorique(expression, resultat) {
+    const li = document.createElement('li');
+    li.textContent = `${expression} = ${resultat}`;
+
+    li.onclick = () => {
+        affichage = resultat.toString();
+        mettreAjourEcran();
+    };
+
+    listeHistorique.prepend(li);
+}
+
+
+// Vider l'historique
+
+const btnViderHistorique = document.getElementById('viderHistorique');
+function viderHistorique() {
+    listeHistorique.innerHTML = '';
+}
+
+btnViderHistorique.onclick = viderHistorique;
+
+
+//Action du clavier
+
+document.addEventListener('keydown', gererClavier);
+
+function gererClavier(e) {
+    const touche = e.key;
+
+    // Ctrl + H pour vider l'historique
+    if (e.ctrlKey && touche.toLowerCase() === 'h') {
+        e.preventDefault();
+        viderHistorique();
+        return;
+    }
+
+    // Empêcher certains comportements (Enter, espace)
+    if (['Enter', ' '].includes(touche)) e.preventDefault();
+
+    // Chiffres
+    if (!isNaN(touche)) {
+        ajouterChiffre(touche);
+    }
+
+    // Virgule / point
+    else if (touche === '.') {
+        ajouterChiffre('.');
+    }
+
+    // Opérateurs
+    else if (['+', '-', '*', '/'].includes(touche)) {
+        const map = { '*': 'x', '/': '÷' };
+        ajouterOperateur(map[touche] || touche);
+    }
+
+    // Parenthèses
+    else if (touche === '(' || touche === ')') {
+        affichage += touche;
+        mettreAjourEcran();
+    }
+
+    // Calculer (Enter ou =)
+    else if (touche === 'Enter' || touche === '=') {
+        calculer();
+    }
+
+    // Effacer un caractère (Backspace)
+    else if (touche === 'Backspace') {
+        backspace();
+    }
+
+    // Supprimer tout (Delete)
+    else if (touche === 'Delete') {
+        effacer();
+    }
+
+
+
+
+    // Opérateurs
+    else if (['+', '-', '*', '/'].includes(touche)) {
+        const map = {
+            '*': 'x',
+            '/': '÷'
+        };
+        ajouterOperateur(map[touche] || touche);
+    }
+
+    // Parenthèses
+    else if (touche === '(' || touche === ')') {
+        affichage += touche;
+        mettreAjourEcran();
+    }
+
+    // Calculer (Enter ou =)
+    else if (touche === 'Enter' || touche === '=') {
+        calculer();
+    }
+
+    // Effacer tout (Backspace ou Delete)
+    else if (touche === 'Backspace' || touche === 'Delete') {
+        effacer();
+    }
+
+    // Pour debug
+    // console.log("Touche :", touche);
+}
+
+
+// Effacer un caractère avec la touche Backspace
+
+function backspace() {
+    if (calculTermine || affichage === 'Erreur') {
+        // Si un calcul vient d’être terminé, on repart à zéro
+        affichage = '0';
+        calculTermine = false;
+    } else if (affichage.length > 1) {
+        affichage = affichage.slice(0, -1); // supprime le dernier caractère
+    } else {
+        affichage = '0'; // si c'était le dernier caractère
+    }
+    mettreAjourEcran();
+}
+
 
 // Fin du fichier js/calculatrice.js
