@@ -2,6 +2,8 @@
 
 const ecran = document.querySelector('#ecran h2');
 const boutons = document.querySelectorAll('button');
+let calculTermine = false;
+
 
 let affichage = '0';
 let resultat = null;
@@ -24,7 +26,10 @@ function mettreAjourEcran() {
 // Fonction pour ajouter un chiffre à l'affichage
 
 function ajouterChiffre(valeur) {
-    if (affichage === '0' || affichage === 'Erreur') {
+    if (calculTermine) {
+        affichage = valeur;   // on repart à zéro
+        calculTermine = false;
+    } else if (affichage === '0' || affichage === 'Erreur') {
         affichage = valeur;
     } else {
         affichage += valeur;
@@ -40,9 +45,14 @@ function ajouterOperateur(operateur) {
     const map = {
         '÷': '/',
         'x': '*',
-        '-': '-',  
+        '-': '-',
         '+': '+',
     };
+
+    if (calculTermine) {
+        calculTermine = false; 
+    }
+
     affichage += map[operateur];
     mettreAjourEcran();
 }
@@ -50,14 +60,31 @@ function ajouterOperateur(operateur) {
 
 
 
+
 // Fonction pour calculer le résultat
+
+function calculSecurise(expression) {
+    if (!/^[0-9+\-*/().% ]+$/.test(expression)) {
+        throw new Error("Expression invalide");
+    }
+    return Function(`"use strict"; return (${expression})`)();
+}
+
 
 function calculer() {
     try {
-        let expression = affichage.replace(/π/g, Math.PI).replace(/e/g, Math.E);
-        resultat = eval(expression);
+        let expression = affichage
+            .replace(/π/g, Math.PI)
+            .replace(/e/g, Math.E);
+
+        resultat = calculSecurise(expression); // 🔐 plus de eval
         dernierResultat = resultat;
         affichage = resultat.toString();
+        calculTermine = true;
+
+        // (optionnel) historique
+        // ajouterHistorique(expression, resultat);
+
     } catch {
         affichage = 'Erreur';
     }
@@ -219,3 +246,4 @@ document.querySelector('.Red').onclick = () => changerMode('rad');
 changerMode('deg');
 console.log('Calculatrice prête');
 
+// Fin du fichier js/calculatrice.js
